@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>高性价比人生指南攻略 · 微信小程序</title>
+<meta name="description" content="高性价比人生指南攻略微信小程序：人生指南攻略。把每一次选择，都花在刀刃上。">
+<meta name="theme-color" content="#071010">
+<style>
+  :root{
+    --bg:#071010;
+    --bg-soft:#0b1717;
+    --card:rgba(45,212,191,.045);
+    --card-hover:rgba(45,212,191,.09);
+    --border:rgba(45,212,191,.16);
+    --border-strong:rgba(45,212,191,.38);
+    --teal:#2dd4bf;
+    --cyan:#22d3ee;
+    --text:#e6f7f3;
+    --text-dim:#8fb5ad;
+    --text-faint:#5f837c;
+    --radius:20px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.6;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  /* ---------- 背景光效 ---------- */
+  .bg-glow{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(560px 380px at 15% -5%, rgba(45,212,191,.13), transparent 65%),
+      radial-gradient(520px 360px at 88% 12%, rgba(34,211,238,.09), transparent 65%),
+      radial-gradient(700px 500px at 50% 110%, rgba(45,212,191,.07), transparent 70%);
+  }
+  .bg-grid{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.35;
+    background-image:linear-gradient(rgba(45,212,191,.05) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(45,212,191,.05) 1px,transparent 1px);
+    background-size:44px 44px;
+    mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 75%);
+    -webkit-mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 75%);
+  }
+  .container{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  /* ---------- 导航 ---------- */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    background:rgba(7,16,16,.72);border-bottom:1px solid rgba(45,212,191,.1)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:.5px}
+  .logo-dot{width:26px;height:26px;border-radius:8px;flex:none;
+    background:linear-gradient(135deg,var(--teal),var(--cyan));
+    display:flex;align-items:center;justify-content:center;font-size:14px;color:#04211d}
+  .logo em{font-style:normal;color:var(--teal)}
+  .nav-links{display:flex;gap:22px;font-size:14px}
+  .nav-links a{color:var(--text-dim);text-decoration:none;transition:color .2s}
+  .nav-links a:hover{color:var(--teal)}
+  @media(max-width:640px){.nav-links{display:none}}
+
+  /* ---------- Hero ---------- */
+  header{padding:84px 0 56px;text-align:center}
+  .badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--teal);
+    border:1px solid var(--border);border-radius:999px;padding:6px 16px;margin-bottom:26px;
+    background:rgba(45,212,191,.06)}
+  .badge i{width:7px;height:7px;border-radius:50%;background:var(--teal);font-style:normal;
+    box-shadow:0 0 8px var(--teal);animation:pulse 2s infinite}
+  @keyframes pulse{50%{opacity:.4}}
+  h1{font-size:clamp(34px,6vw,58px);line-height:1.18;font-weight:800;letter-spacing:1px}
+  h1 .grad{background:linear-gradient(90deg,var(--teal),var(--cyan) 60%,#7ef0dc);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero-sub{margin:22px auto 0;max-width:620px;color:var(--text-dim);font-size:clamp(15px,2.4vw,18px)}
+  .hero-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:30px}
+  .hero-tags span{font-size:13px;color:var(--text-dim);border:1px solid var(--border);
+    border-radius:999px;padding:5px 14px;background:var(--card)}
+
+  /* ---------- 区块标题 ---------- */
+  section{padding:56px 0}
+  .sec-head{text-align:center;margin-bottom:42px}
+  .sec-head h2{font-size:clamp(24px,4vw,32px);font-weight:700}
+  .sec-head h2 em{font-style:normal;color:var(--teal)}
+  .sec-head p{color:var(--text-dim);margin-top:10px;font-size:15px}
+
+  /* ---------- App 卡片 ---------- */
+  .apps{display:flex;flex-direction:column;gap:32px}
+  .app-card{display:grid;grid-template-columns:1fr 300px;gap:36px;align-items:center;
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:38px;position:relative;overflow:hidden;
+    transition:transform .25s,border-color .25s,background .25s}
+  .app-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,transparent,var(--teal),transparent);opacity:.6}
+  .app-card:hover{transform:translateY(-3px);border-color:var(--border-strong);background:var(--card-hover)}
+  .app-head{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+  .app-icon{width:62px;height:62px;border-radius:16px;flex:none;font-size:30px;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 22px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.25)}
+  .g-teal{background:linear-gradient(135deg,#0d9488,#22d3ee)}
+  .g-blue{background:linear-gradient(135deg,#2563eb,#22d3ee)}
+  .g-orange{background:linear-gradient(135deg,#f59e0b,#f97316)}
+  .app-name{font-size:22px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .tag{font-size:11px;font-weight:500;color:var(--teal);border:1px solid var(--border-strong);
+    border-radius:999px;padding:2px 10px;background:rgba(45,212,191,.08);white-space:nowrap}
+  .app-tagline{color:var(--teal);font-size:14px;margin-bottom:12px;letter-spacing:.3px}
+  .app-desc{color:var(--text-dim);font-size:15px;margin-bottom:20px}
+  .app-feats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+  .app-feats span{font-size:12.5px;color:var(--text-dim);background:rgba(255,255,255,.045);
+    border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:4px 12px}
+  .app-src{font-size:13px;color:var(--text-faint);margin-bottom:24px}
+  .app-src a{color:var(--text-dim);text-decoration:none;border-bottom:1px dashed rgba(45,212,191,.4);
+    transition:color .2s}
+  .app-src a:hover{color:var(--teal)}
+  .app-src .lic{color:var(--teal);font-size:12px;border:1px solid var(--border);
+    border-radius:6px;padding:1px 8px;margin:0 4px;background:rgba(45,212,191,.06)}
+  .qr-side{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .qr-box{background:#fff;border-radius:18px;padding:14px;cursor:pointer;position:relative;
+    box-shadow:0 10px 34px rgba(0,0,0,.45),0 0 0 1px rgba(45,212,191,.25);
+    transition:transform .2s,box-shadow .2s}
+  .qr-box:hover{transform:scale(1.03);box-shadow:0 14px 40px rgba(45,212,191,.25),0 0 0 1px var(--teal)}
+  .qr-box img{display:block;width:100%;height:auto;border-radius:8px}
+  .qr-box .qr-hint{position:absolute;inset:auto 0 0 0;text-align:center;padding:8px 0 4px;
+    font-size:12px;color:#0d9488;font-weight:600}
+  .qr-label{font-size:13px;color:var(--text-faint);text-align:center}
+  .qr-label b{color:var(--text-dim);display:block;font-size:14px;margin-bottom:2px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;
+    font-size:14.5px;font-weight:600;border-radius:12px;padding:11px 22px;text-decoration:none;
+    transition:transform .15s,opacity .2s;font-family:inherit}
+  .btn:active{transform:scale(.96)}
+  .btn-primary{background:linear-gradient(90deg,var(--teal),var(--cyan));color:#04211d}
+  .btn-ghost{background:transparent;color:var(--teal);border:1px solid var(--border-strong)}
+  @media(max-width:820px){
+    .app-card{grid-template-columns:1fr;padding:26px;gap:26px}
+    .qr-side{flex-direction:row;justify-content:center;flex-wrap:wrap;gap:20px}
+    .qr-box{width:170px}
+    header{padding:60px 0 40px}
+  }
+
+  /* ---------- 即将上线 ---------- */
+  .soon-card{border:1px dashed rgba(45,212,191,.3);border-radius:var(--radius);padding:38px;
+    text-align:center;color:var(--text-faint);background:transparent}
+  .soon-icon{font-size:34px;margin-bottom:10px;filter:grayscale(1);opacity:.7}
+  .soon-card h3{color:var(--text-dim);font-size:18px;margin-bottom:6px}
+  .soon-card p{font-size:14px}
+
+  /* ---------- 使用步骤 ---------- */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .step{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px 22px}
+  .step-num{font-size:13px;color:var(--teal);font-weight:700;letter-spacing:2px;margin-bottom:10px}
+  .step h3{font-size:16.5px;margin-bottom:8px}
+  .step p{font-size:14px;color:var(--text-dim)}
+  @media(max-width:720px){.steps{grid-template-columns:1fr}}
+
+  /* ---------- 页脚 ---------- */
+  footer{border-top:1px solid rgba(45,212,191,.1);padding:34px 0 46px;text-align:center;
+    color:var(--text-faint);font-size:13.5px;margin-top:30px}
+  footer .logo{justify-content:center;margin-bottom:10px}
+
+  /* ---------- 二维码弹窗 ---------- */
+  .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
+    background:rgba(2,10,10,.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:24px}
+  .modal.open{display:flex}
+  .modal-inner{background:var(--bg-soft);border:1px solid var(--border-strong);border-radius:22px;
+    padding:30px;max-width:360px;width:100%;text-align:center;animation:pop .25s ease}
+  @keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+  .modal-inner img{width:100%;max-width:280px;border-radius:12px;background:#fff;padding:10px;margin:14px 0}
+  .modal-inner h3{font-size:18px}
+  .modal-inner p{color:var(--text-dim);font-size:14px;margin-bottom:4px}
+  .modal-close{margin-top:10px;background:transparent;border:1px solid var(--border-strong);
+    color:var(--teal);border-radius:10px;padding:9px 26px;font-size:14px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="bg-grid"></div>
+
+<nav>
+  <div class="container nav-inner">
+    <div class="logo"><span class="logo-dot">⚡</span>高性价比<em>人生指南小程序版</em></div>
+    <div class="nav-links">
+      <a href="#apps">小程序</a>
+      <a href="#how">如何使用</a>
+      <a href="#about">关于</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="container">
+    <div class="badge"><i></i>微信小程序 · 持续更新中</div>
+    <h1>高性价比<span class="grad">人生指南攻略</span><br>系列小程序</h1>
+    <p class="hero-sub">把每一次消费和选择，都花在刀刃上。衣食住行、职场成长，用更少的预算，过更讲究的生活。</p>
+    <div class="hero-tags">
+      <span>📱 微信内即点即用</span>
+      <span>🧭 场景化攻略</span>
+      <span>💡 实用决策清单</span>
+      <span>🔄 内容持续更新</span>
+    </div>
+  </div>
+</header>
+
+<section id="apps">
+  <div class="container">
+    <div class="sec-head">
+      <h2>我们的<em>小程序</em></h2>
+      <p>微信扫一扫下方二维码，或点击二维码在微信中打开</p>
+    </div>
+    <div class="apps" id="appsList"><!-- JS 动态渲染 --></div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="container">
+    <div class="sec-head">
+      <h2>如何<em>使用</em></h2>
+      <p>三种方式，随时打开</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num">STEP 01</div><h3>扫一扫</h3><p>打开微信「扫一扫」，扫描页面上对应小程序的二维码，即可直达。</p></div>
+      <div class="step"><div class="step-num">STEP 02</div><h3>点击二维码</h3><p>手机上点击二维码图片，若已在微信中配置了跳转链接，将直接唤起微信打开小程序。</p></div>
+      <div class="step"><div class="step-num">STEP 03</div><h3>搜索名称</h3><p>在微信中搜索小程序名称「高性价比人生指南攻略」。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="container">
+    <div class="soon-card">
+      <div class="soon-icon">🚀</div>
+      <h3>抖音小程序，敬请期待</h3>
+      <p>高性价比人生指南攻略将持续推出不同平台小程序，方便使用。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="logo"><span class="logo-dot">⚡</span>高性价比<em>人生指南</em></div>
+    <p>用更少的预算，过更讲究的生活 · © 2026 高性价比人生指南攻略</p>
+    <p style="margin-top:8px;font-size:12.5px">本站小程序内容基于开源项目
+      <a href="https://github.com/eternity4719/HowToLiveBetter" target="_blank" rel="noopener" style="color:var(--text-dim);text-decoration:none;border-bottom:1px dashed rgba(45,212,191,.35)">HowToLiveBetter</a> 
+      整理，均遵循 <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="noopener" style="color:var(--text-dim);text-decoration:none;border-bottom:1px dashed rgba(45,212,191,.35)">CC BY 4.0</a> 协议署名传播，感谢开源作者。
+    </p>
+  </div>
+</footer>
+
+<!-- 二维码放大弹窗 -->
+<div class="modal" id="modal">
+  <div class="modal-inner">
+    <h3 id="mTitle"></h3>
+    <img id="mImg" src="" alt="小程序二维码">
+    <p>请使用微信「扫一扫」识别二维码</p>
+    <p id="mTip" style="font-size:12.5px;color:var(--text-faint)">提示：也可以截图后长按识别</p>
+    <button class="modal-close" id="mClose">关闭</button>
+  </div>
+</div>
+
+<script>
+/**
+ * 小程序配置 —— 以后新增小程序，只需在数组里加一个对象即可
+ * qr     : 二维码图片路径（建议用微信公众平台下载的官方小程序码替换 assets 下的占位图）
+ * scheme : 微信 URL Link / URL Scheme（微信公众平台或服务端接口生成，
+ *          例如 https://wxaurl.cn/xxxx），填好后手机端点击二维码/按钮即可唤起微信打开小程序；
+ *          留空时点击仅放大展示二维码
+ */
+const APPS = [
+  {
+    id: "life",
+    name: "高性价比人生指南攻略",
+    tag: "生活 · 攻略",
+    icon: "🏠",
+    grad: "g-teal",
+    tagline: "把每一次消费和选择，都花在刀刃上",
+    desc: "覆盖衣食住行、数码好物、健康学习等生活场景的性价比决策攻略合集。每一条都帮你算清「值不值」，少花冤枉钱、少踩坑，用更少的预算过更讲究的生活。",
+    feats: ["多场景攻略", "避坑指南", "性价比决策清单", "持续更新"],
+    source: "https://github.com/eternity4719/HowToLiveBetter",
+    sourceLabel: "GitHub · eternity4719/HowToLiveBetter",
+    license: "CC BY 4.0",
+    qr: "assets/qr-life.jpg",
+    scheme: ""
+  },
+];
+
+function renderApps(){
+  const list = document.getElementById("appsList");
+  list.innerHTML = APPS.map(a => `
+    <article class="app-card" id="${a.id}">
+      <div class="app-info">
+        <div class="app-head">
+          <div class="app-icon ${a.grad}">${a.icon}</div>
+          <div>
+            <div class="app-name">${a.name}<span class="tag">${a.tag}</span></div>
+          </div>
+        </div>
+        <div class="app-tagline">${a.tagline}</div>
+        <p class="app-desc">${a.desc}</p>
+        <div class="app-feats">${a.feats.map(f=>`<span>${f}</span>`).join("")}</div>
+        ${a.source ? `<div class="app-src">开源项目：<a href="${a.source}" target="_blank" rel="noopener">${a.sourceLabel}</a><span class="lic">${a.license}</span>内容基于该项目整理</div>` : ""}
+        <button class="btn btn-primary" onclick="openApp('${a.id}')">📱 在微信中打开</button>
+      </div>
+      <div class="qr-side">
+        <div class="qr-box" onclick="openApp('${a.id}')" title="点击打开或放大">
+          <img src="${a.qr}" alt="${a.name} 小程序二维码">
+        </div>
+        <div class="qr-label"><b>${a.name}</b>微信扫码 · 即点即用</div>
+      </div>
+    </article>`).join("");
+}
+
+function openApp(id){
+  const app = APPS.find(a => a.id === id);
+  if(!app) return;
+  if(app.scheme){
+    // 已配置微信跳转链接：直接唤起微信打开小程序
+    window.location.href = app.scheme;
+  }else{
+    // 未配置：放大展示二维码，引导扫码
+    showModal(app);
+  }
+}
+
+function showModal(app){
+  document.getElementById("mTitle").textContent = app.name;
+  document.getElementById("mImg").src = app.qr;
+  document.getElementById("modal").classList.add("open");
+}
+document.getElementById("mClose").addEventListener("click", () =>
+  document.getElementById("modal").classList.remove("open"));
+document.getElementById("modal").addEventListener("click", e => {
+  if(e.target.id === "modal") e.currentTarget.classList.remove("open");
+});
+
+renderApps();
+</script>
+</body>
+</html>
